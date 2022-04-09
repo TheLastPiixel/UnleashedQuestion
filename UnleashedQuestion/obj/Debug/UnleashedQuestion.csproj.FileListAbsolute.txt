@@ -1,0 +1,8 @@
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\bin\Debug\UnleashedQuestion.exe.config
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\bin\Debug\UnleashedQuestion.exe
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\bin\Debug\UnleashedQuestion.pdb
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\obj\Debug\UnleashedQuestion.csproj.AssemblyReference.cache
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\obj\Debug\UnleashedQuestion.csproj.SuggestedBindingRedirects.cache
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\obj\Debug\UnleashedQuestion.csproj.CoreCompileInputs.cache
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\obj\Debug\UnleashedQuestion.exe
+C:\Users\TheLastPiixel\source\repos\UnleashedQuestion\UnleashedQuestion\obj\Debug\UnleashedQuestion.pdb
