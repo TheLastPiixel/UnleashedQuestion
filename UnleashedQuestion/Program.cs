@@ -54,7 +54,7 @@ namespace UnleashedQuestion
 
             if (wholeNumber > 0)
             {
-                dollarString = ConvertIntToString(wholeNumber) + "Dollar" + (dollarsPlural ? "s " : " ") + (hasCents ? "and " : "");
+                dollarString = ConvertIntToString(wholeNumber) + "Dollar" + (dollarsPlural ? "s " : " ") + (hasCents ? "And " : "");
             }
 
             return dollarString + centsString;
@@ -91,7 +91,9 @@ namespace UnleashedQuestion
             int millions = Convert.ToInt32(Decimal.Round(value / 1000000));
             int thousands = Convert.ToInt32(Decimal.Round(value / 1000)) % 1000;
             int hundreds = (value % 1000000) - (thousands * 1000);
-            return HandleHundreds(millions, false) + "Million " + HandleHundreds(thousands, true) + "Thousand " + HandleHundreds(hundreds, true);
+            string thousandsString = HandleHundreds(thousands, (thousands < 100 ? false : true)) + (thousands != 0 ? "Thousand " : "");
+            string hundredsString = HandleHundreds(hundreds, true);
+            return HandleHundreds(millions, false) + "Million " + thousandsString + hundredsString;
         }
 
         //Description: Handles int to string conversion for values in the thousands
@@ -101,7 +103,11 @@ namespace UnleashedQuestion
         {
             int thousands = Convert.ToInt32(Decimal.Round(value / 1000));
             int hundreds = value % 1000;
-            return HandleHundreds(thousands, false) + "Thousand " + HandleHundreds(hundreds, true);
+            if (value != 0)
+            {
+                return HandleHundreds(thousands, false) + "Thousand " + HandleHundreds(hundreds, true);
+            }
+            return "";
         }
 
         //Description: Handles int to string conversaion for values in the hundreds
@@ -113,8 +119,11 @@ namespace UnleashedQuestion
             string compoundString = (compoundAnd ? "And " : "");
             switch (digitCount)
             {
+                case 0:
+                    return "";
+                    break;
                 case 1:
-                    return compoundString + SingleDigit(value);
+                    return compoundString + FirstDigit(value);
                     break;
                 case 2:
                     {
@@ -125,11 +134,12 @@ namespace UnleashedQuestion
                     {
                         int firstDigit = Convert.ToInt32(Decimal.Round(value / 100));
                         int lastTwoDigits = value % 100;
-                        return TripleDigits(firstDigit) + "And " + HandleTens(lastTwoDigits);
+                        string conjunction = lastTwoDigits == 0 ? "" : "And ";
+                        return ThirdDigit(firstDigit) + conjunction + HandleTens(lastTwoDigits);
                     }
                     break;
                 default:
-                    return "ERROR in NumberToText ";
+                    return "ERROR in NumberToText() ";
                     break;
             }
         }
@@ -142,11 +152,11 @@ namespace UnleashedQuestion
             int secondDigit = value % 10;
             if (CheckContainsTeen(value))
             {
-                return IsTeen(value);
+                return TeenDigits(value);
             }
             else
             {
-                return DoubleDigits(firstDigit) + SingleDigit(secondDigit);
+                return SecondDigit(firstDigit) + FirstDigit(secondDigit);
             }
         }
         #endregion
@@ -154,14 +164,14 @@ namespace UnleashedQuestion
         #region NumbersToString Functions
         //Input: Takes in a single digit (ie X in 20,X25)
         //Output: String for third digit
-        public static string TripleDigits(int value)
+        public static string ThirdDigit(int value)
         {
-            return SingleDigit(value) + "Hundred ";
+            return FirstDigit(value) + "Hundred ";
         }
 
         //Input: Takes in a single digit (ie X in 2,3X9)
         //Output: String for second digit
-        public static string DoubleDigits(int value)
+        public static string SecondDigit(int value)
         {
             switch (value)
             {
@@ -178,7 +188,7 @@ namespace UnleashedQuestion
                     return "Thirty ";
                     break;
                 case 4:
-                    return "Fourty ";
+                    return "Forty ";
                     break;
                 case 5:
                     return "Fifty ";
@@ -193,10 +203,10 @@ namespace UnleashedQuestion
                     return "Eighty ";
                     break;
                 case 9:
-                    return "Ninty ";
+                    return "Ninety ";
                     break;
                 default:
-                    return "ERROR in DoubleDigit ";
+                    return "ERROR in SecondDigit() ";
                     break;
             }
         }
@@ -204,7 +214,7 @@ namespace UnleashedQuestion
         //Description: Used to return the string for "Teen" values (ie 12, 13, .. ,19)
         //Input: Takes in a digit integer
         //Output: String for the "Teen" value
-        public static string IsTeen(int value)
+        public static string TeenDigits(int value)
         {
             switch (value)
             {
@@ -223,19 +233,19 @@ namespace UnleashedQuestion
                 case 18:
                     return "Eighteen ";
                     break;
-                case int n when (n == 14 || n == 16 || n == 17 || n == 19): //ISSUE WITH SPACES BETWEEN NUMBER AND "TEEN"
-                    string numberString = SingleDigit(n % 10);
+                case int n when (n == 14 || n == 16 || n == 17 || n == 19): 
+                    string numberString = FirstDigit(n % 10);
                     int stringLength = numberString.Length;
                     return numberString.Remove(stringLength - 1, 1) + "teen ";
                 default:
-                    return "ERROR in IsTeen ";
+                    return "ERROR in TeenDigits() ";
                     break;
             }
         }
 
         //Input: Takes in the last digit (ie X in 9,23X)
         //Output: String for last digit
-        public static string SingleDigit(int value)
+        public static string FirstDigit(int value)
         {
             switch (value)
             {
@@ -270,7 +280,7 @@ namespace UnleashedQuestion
                     return "Nine ";
                     break;
                 default:
-                    return "ERROR in SingleDigit ";
+                    return "ERROR in FirstDigit() ";
                     break;
             }
         }
