@@ -7,17 +7,6 @@ namespace UnleashedUnitTest
     [TestClass]
     public class UnleashedQuestionUnitTest
     {
-        [DataRow(15, true)]
-        [DataRow(20, false)]
-        [DataRow(19, true)]
-        [DataRow(-Int32.MaxValue, false)]
-        [DataTestMethod]
-        public void TestCheckContainsTeen(int testVal, bool expected)
-        {
-            bool actual = Program.CheckContainsTeen(testVal);
-            Assert.AreEqual(expected, actual);
-        }
-
         [DataRow(876235, 6)]
         [DataRow(0, 0)]
         [DataRow(1, 1)]
@@ -152,8 +141,8 @@ namespace UnleashedUnitTest
         [DataRow(8000000.77, "Eight Million Dollars And Seventy Seven Cents")]
         [DataRow(889787.25, "Eight Hundred And Eighty Nine Thousand Seven Hundred And Eighty Seven Dollars And Twenty Five Cents")]
         [DataRow(675.00, "Six Hundred And Seventy Five Dollars ")]
-        [DataRow(0.95, "Ninety Five Cents")]
-        [DataRow(26, "Twenty Six Dollars ")]
+        [DataRow(0.01, "One Cent")]
+        [DataRow(1, "One Dollar ")]
         [DataRow(1049219421.4213, "Invalid Input In ConvertIntToString()Dollars And Forty Two Cents")]
         [DataTestMethod]
         public void TestConvertCurrencyToString(double testVal, string expected)

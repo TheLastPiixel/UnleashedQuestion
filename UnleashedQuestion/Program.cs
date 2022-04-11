@@ -10,31 +10,14 @@ namespace UnleashedQuestion
     {
         static void Main(string[] args)
         {
-            decimal input = 0;
-            while (true)
+            while(true)
             {
-                Console.WriteLine("Enter currency values to convert: ");
-                try
-                {
-                    input = Math.Round(Convert.ToDecimal(Console.ReadLine()), 2, MidpointRounding.ToEven);
-                    if (input < (decimal)0.01 || input > (decimal)999999999.99)
-                    {
-                        Console.WriteLine("Invalid Input!");
-                    }
-                    else
-                    {
-                        Console.WriteLine(ConvertCurrencyToString(input));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Invalid Input!");
-                }
+                Console.WriteLine(GetUserInput());
             }
         }
 
         #region Main Methods
-        //Description: Converts a decimal currency to its spelt out text format
+        //Description: Converts a decimal number representing currency to its text format
         public static string ConvertCurrencyToString(decimal currencyValue)
         {
             int wholeNumber, decimalNumber;
@@ -83,22 +66,28 @@ namespace UnleashedQuestion
         #endregion
 
         #region HandlerFunctions
-        //Description: Handles int to string conversion for values in the millions
-        //Input: Int > 999,999 and < 1,000,000,000
-        //Output: String of the value
+        //Description: Handles int to string conversion for numbers between 1 - 999,999,999
+        //Input: 1-9 digit positive integer
         public static string HandleMillions(int value)
         {
             int millions = Convert.ToInt32(Decimal.Round(value / 1000000));
             int thousands = Convert.ToInt32(Decimal.Round(value / 1000)) % 1000;
             int hundreds = (value % 1000000) - (thousands * 1000);
-            string thousandsString = HandleHundreds(thousands, (thousands < 100 ? false : true)) + (thousands != 0 ? "Thousand " : "");
+
+            //Helpers for thousands string
+            bool requiresConjunction = thousands < 100 ? false : true;
+            string thousandSuffix = thousands != 0 ? "Thousand " : "";
+
+            //Assemble the strings for values in the millions, thousands, and hundreds
+            string thousandsString = HandleHundreds(thousands, requiresConjunction) + thousandSuffix;
             string hundredsString = HandleHundreds(hundreds, true);
-            return HandleHundreds(millions, false) + "Million " + thousandsString + hundredsString;
+            string millionsString = HandleHundreds(millions, false) + "Million ";
+
+            return millionsString + thousandsString + hundredsString;
         }
 
-        //Description: Handles int to string conversion for values in the thousands
-        //Input: Int > 999 and < 1,000,000
-        //Output: String of the value
+        //Description: Handles int to string conversion for numbers between 1 - 999,999
+        //Input: 1-6 digit positive integer
         public static string HandleThousands(int value)
         {
             int thousands = Convert.ToInt32(Decimal.Round(value / 1000));
@@ -110,32 +99,31 @@ namespace UnleashedQuestion
             return "";
         }
 
-        //Description: Handles int to string conversaion for values in the hundreds
-        //Input: Takes in a 1-3 digit value and a bool to enable or disable the compounding "And"
-        //Output: String of the value
-        public static string HandleHundreds(int value, bool compoundAnd)
+        //Description: Handles the int to string conversaion for numbers between 1 - 999
+        //Input: 1-3 digit positive integer and a bool to enable or disable the prefix "And"
+        public static string HandleHundreds(int value, bool needsConjunction)
         {
             int digitCount = NumberOfDigits(value);
-            string compoundString = (compoundAnd ? "And " : "");
+            string prefixConjunction = (needsConjunction ? "And " : "");
             switch (digitCount)
             {
                 case 0:
                     return "";
                     break;
                 case 1:
-                    return compoundString + FirstDigit(value);
+                    return prefixConjunction + FirstDigit(value);
                     break;
                 case 2:
                     {
-                        return compoundString + HandleTens(value);
+                        return prefixConjunction + HandleTens(value);
                     }
                     break;
                 case 3:
                     {
-                        int firstDigit = Convert.ToInt32(Decimal.Round(value / 100));
-                        int lastTwoDigits = value % 100;
-                        string conjunction = lastTwoDigits == 0 ? "" : "And ";
-                        return ThirdDigit(firstDigit) + conjunction + HandleTens(lastTwoDigits);
+                        int thirdDigit = Convert.ToInt32(Decimal.Round(value / 100));
+                        int firstTwoDigits = value % 100;
+                        string compoundConjunction = firstTwoDigits == 0 ? "" : "And ";
+                        return ThirdDigit(thirdDigit) + compoundConjunction + HandleTens(firstTwoDigits);
                     }
                     break;
                 default:
@@ -144,13 +132,14 @@ namespace UnleashedQuestion
             }
         }
 
-        //Input: Takes in the last two digits in a number (ie XX in 2,4XX)
-        //Output: String of the last two digits
+
+        //Description: Handles the int to string conversion for numbers between 1 - 99
+        //Input: 1-2 digit positive integer
         public static string HandleTens(int value)
         {
             int firstDigit = Convert.ToInt32(Decimal.Round(value / 10));
             int secondDigit = value % 10;
-            if (CheckContainsTeen(value))
+            if (value >= 11 && value <= 19)
             {
                 return TeenDigits(value);
             }
@@ -162,15 +151,16 @@ namespace UnleashedQuestion
         #endregion
 
         #region NumbersToString Functions
+        //Description: Returns the string for a value in the hundreds (ie One Hundred, Two Hundred, .., Nine Hundred)
         //Input: Takes in a single digit (ie X in 20,X25)
-        //Output: String for third digit
         public static string ThirdDigit(int value)
         {
             return FirstDigit(value) + "Hundred ";
         }
 
+
+        //Description: Returns a string for a value in the tens (ie Ten, Twenty, .., Ninety)
         //Input: Takes in a single digit (ie X in 2,3X9)
-        //Output: String for second digit
         public static string SecondDigit(int value)
         {
             switch (value)
@@ -211,9 +201,8 @@ namespace UnleashedQuestion
             }
         }
 
-        //Description: Used to return the string for "Teen" values (ie 12, 13, .. ,19)
-        //Input: Takes in a digit integer
-        //Output: String for the "Teen" value
+        //Description: Returns the string for "Teen" values (ie 11, 12, 13, .., 19)
+        //Input: Takes in a 2 digit integer >= 11 and <= 19
         public static string TeenDigits(int value)
         {
             switch (value)
@@ -235,6 +224,7 @@ namespace UnleashedQuestion
                     break;
                 case int n when (n == 14 || n == 16 || n == 17 || n == 19): 
                     string numberString = FirstDigit(n % 10);
+                    //Removes the space after the ones value (ie "Six " - to make "Sixteen")
                     int stringLength = numberString.Length;
                     return numberString.Remove(stringLength - 1, 1) + "teen ";
                 default:
@@ -243,8 +233,8 @@ namespace UnleashedQuestion
             }
         }
 
-        //Input: Takes in the last digit (ie X in 9,23X)
-        //Output: String for last digit
+        //Description: Returns the string for value in the ones (ie One,Two, .., Nine)
+        //Input: Takes in a signle digit integer (ie X in 9,23X)
         public static string FirstDigit(int value)
         {
             switch (value)
@@ -303,22 +293,33 @@ namespace UnleashedQuestion
                 int digitCount = Convert.ToInt32(Math.Floor(Math.Log10(value) + 1));
                 return digitCount;
             }
-            catch (System.OverflowException)
+            catch (OverflowException)
             {
                 return 0;
             }
         }
 
-        //Description: Check if the last two digits in a value is a "Teen" (ie 11, 12, .., 19)
-        //Input: Takes in an an integer of any length
-        public static bool CheckContainsTeen(int value)
+        //Description: Gets and validates user input then passes it to be converted into text
+        public static string GetUserInput()
         {
-            int twoDigitNumber = value % 100;
-            if (twoDigitNumber >= 11 && twoDigitNumber <= 19)
+            decimal input = 0;
+            Console.WriteLine("Enter currency values to convert: ");
+            try
             {
-                return true;
+                input = Math.Round(Convert.ToDecimal(Console.ReadLine()), 2, MidpointRounding.ToEven);
+                if (input < (decimal)0.01 || input > (decimal)999999999.99)
+                {
+                    return "Invalid Input! value must be between 0.01 and 999999999.99";
+                }
+                else
+                {
+                    return ConvertCurrencyToString(input);
+                }
             }
-            return false;
+            catch (FormatException)
+            {
+                return "Invalid Input Type! please only enter decimal types";
+            }
         }
         #endregion
     }
