@@ -2,7 +2,7 @@
 
 ## Instructions
 1. Open UnleashedQuestion.exe in UnleashedQuestion/bin/Debug
-2. Enter a currency value (Look below for constraints)
+2. Enter a decimal type currency value (Look below for constraints)
 3. The console will output the currency value in text format!
 
 ## Limitations & Assumptions
